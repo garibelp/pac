@@ -1,47 +1,63 @@
 import random
+import networkx as nx
+import pylab
 
-class Graph:
-    def __init__(self, N, E):
-        self.N = N  # Number of nodes
-        self.E = E  # Number of edges
-        self.edges = []
+# Function that generate the graph using networkx
+def generateGraph(nodes):
+    # Simple digraph generated
+    G = nx.DiGraph()
+    return generateEdges(G, nodes)
 
-class Edge:
-    def __init__(self, S, E, W):
-        self.S = S  # Node start
-        self.E = E  # Node end
-        self.W = W  # Edge weight
+# Function that insert the nodes and edges on the graph
+def generateEdges(G, nodes):
+    for node in range(nodes):
+        G.add_node(node + 1)
 
-def generateGraph(V, E):
-    graph = Graph(V, E)
-    # TODO: Logic to generate edges connection for graph
-    return graph
+    # TODO: Update method to randomly generate edges and weight
+    # Example edge:
+    G.add_edges_from([(1, 2)], weight = random.randint(-10, 10))
+    
+    return G
 
-def generateEdge(startNode, endNode):
-    W = random.randint(-10, 10) # Generate weight
-    return Edge(startNode, endNode, W)
 
 def validateInput(message):
-    number = input(message)
     try:
-        val = int(number)
-        if val < 0:
+        number = int(input(message))
+        if number <= 0:
             raise ValueError()
+        return int(number)
     except ValueError:
         # if not a positive int print message and ask for input again
         print("Invalid input (Must be a positive integer)")
         return validateInput(message)
-    return number
 
 def main():
-    # User entries for vertex and edge numbers
-    n = validateInput("Enter number of nodes: ")
-    e = validateInput("Enter number of edges: ")
-    
-    g = generateGraph(n, e)
-    
-    # TODO: Plot generated graph
-    print("test", g.N, g.E, g.edges)
+    # Generate basic graph
+    G = generateGraph(validateInput("Enter number of nodes: "))
+
+    # Add display options
+    options = {
+        'node_color': 'gray',
+        'node_size': 500,
+        'width': 1,
+        'arrows': True,
+        'arrowstyle': '-|>',
+        'arrowsize': 15,
+        'with_labels': True,
+    }
+
+    # Add nodes positioning
+    pos = nx.spring_layout(G)
+
+    # Generate graph draw
+    nx.draw(G, pos, **options)
+
+    # Add the edge weight to the draw
+    labels = nx.get_edge_attributes(G, 'weight')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+
+    # Display image
+    pylab.show()
 
 if __name__ == "__main__":
     main()
