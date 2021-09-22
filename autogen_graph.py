@@ -4,16 +4,16 @@ from networkx.algorithms.components.connected import is_connected
 import pylab
 
 # Function that generate the graph using networkx
-def generateGraph(nodes):
+def generate_graph(nodes):
     # nodes = number of nodes, p = probability of edge generation
     G = nx.gnp_random_graph(nodes, p = 0.5)
 
     # TODO: Ensure that all nodes to be connected
 
-    return generateEdgesWeight(G, nodes)
+    return generate_edges_weight(G, nodes)
 
 # Function that insert the nodes and edges on the graph
-def generateEdgesWeight(G, nodes):
+def generate_edges_weight(G, nodes):
     for (start, end) in G.edges:
         G.edges[start, end]['weight'] = random.randint(-10, 10)
 
@@ -31,7 +31,7 @@ def validateAndUpdateGraph(G):
     
     return G
 
-def validateInput(message):
+def validate_input(message):
     try:
         number = int(input(message))
         if number <= 0:
@@ -40,11 +40,11 @@ def validateInput(message):
     except ValueError:
         # if not a positive int print message and ask for input again
         print("Invalid input (Must be a positive integer)")
-        return validateInput(message)
+        return validate_input(message)
 
 def main():
     # Generate basic graph
-    G = generateGraph(validateInput("Enter number of nodes: "))
+    G = generate_graph(validate_input("Enter number of nodes: "))
 
     # Add display options
     options = {
