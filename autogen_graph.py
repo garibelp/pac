@@ -1,34 +1,31 @@
 import random
 import networkx as nx
-from networkx.algorithms.components.connected import is_connected
+import numpy as np
 import pylab
 
 # Function that generate the graph using networkx
 def generate_graph(nodes):
     # nodes = number of nodes, p = probability of edge generation
-    G = nx.gnp_random_graph(nodes, p = 0.5)
+    # Generating a directed graph to avoid unconnected nodes
+    G = nx.gnp_random_graph(nodes, p = 0.4, directed = True)
 
     # TODO: Ensure that all nodes to be connected
 
-    return generate_edges_weight(G, nodes)
+    return generate_edges_weight(G)
 
 # Function that insert the nodes and edges on the graph
-def generate_edges_weight(G, nodes):
+def generate_edges_weight(G):
+    # Randomly add weight on all edges of the graph
     for (start, end) in G.edges:
         G.edges[start, end]['weight'] = random.randint(-10, 10)
 
-    return validateAndUpdateGraph(G)
+    return validate_and_update_graph(G)
 
 # Function that check if graph is already correctly set
-def validateAndUpdateGraph(G):
-    # TODO: connect missing nodes on graph
-    if (nx.is_connected(G) == False):
-        print("Is not connected")
-
+def validate_and_update_graph(G):
     # TODO: break the negative edge cycles on the graph
     # if (graph has negative cycle):
-    #   remove negative cycle
-    
+    #   remove negative cycle    
     return G
 
 def validate_input(message):
