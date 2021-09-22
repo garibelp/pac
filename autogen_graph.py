@@ -1,6 +1,5 @@
 import random
 import networkx as nx
-import numpy as np
 import pylab
 
 # Function that generate the graph using networkx
@@ -9,44 +8,36 @@ def generate_graph(nodes):
     # Generating a directed graph to avoid unconnected nodes
     G = nx.gnp_random_graph(nodes, p = 0.4, directed = True)
 
-    # TODO: Ensure that all nodes to be connected
+    generate_edges_weight(G)
 
-    return generate_edges_weight(G)
+    connect_all_nodes(G)
 
-# Function that insert the nodes and edges on the graph
+    return remove_negative_cycles(G)
+
+# Randomly add weight on all edges of the graph
 def generate_edges_weight(G):
-    # Randomly add weight on all edges of the graph
     for (start, end) in G.edges:
         G.edges[start, end]['weight'] = random.randint(-10, 10)
-
-    return validate_and_update_graph(G)
-
-# Function that check if graph is already correctly set
-def validate_and_update_graph(G):
-    # TODO: break the negative edge cycles on the graph
-    # if (graph has negative cycle):
-    #   remove negative cycle    
     return G
 
-def validate_input(message):
-    try:
-        number = int(input(message))
-        if number <= 0:
-            raise ValueError()
-        return int(number)
-    except ValueError:
-        # if not a positive int print message and ask for input again
-        print("Invalid input (Must be a positive integer)")
-        return validate_input(message)
+# Check if graph has any node without edges and add to the graph
+def connect_all_nodes(G):
+    # TODO: Validate and generate the node
+    return G
+
+# Check if graph contains negative cycles and break it
+def remove_negative_cycles(G):
+    # TODO: Check with Bellman-Ford and break
+    return G
 
 def main():
     # Generate basic graph
-    G = generate_graph(validate_input("Enter number of nodes: "))
+    G = generate_graph(random.randrange(2, 15))
 
     # Add display options
     options = {
         'node_color': 'gray',
-        'node_size': 500,
+        'node_size': 1000,
         'width': 1,
         'arrows': True,
         'arrowstyle': '-|>',
