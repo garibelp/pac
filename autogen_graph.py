@@ -25,7 +25,7 @@ def generate_edges_weight(G):
 
     # Start changing the weights and checking if it generates a negative cycle
     for (start, end) in G.edges:
-        weight = random.randint(-50, 50)
+        weight = random.randint(-10, 10)
         G.edges[start, end]['weight'] = weight
         if weight < 0:
             neg_cycle = retrieve_negative_cycles(G)
@@ -34,13 +34,11 @@ def generate_edges_weight(G):
                 print('TODO:' + neg_cycle)
     return G
 
-def main():
-    # Generate basic graph
-    G = generate_graph(int(input('--> ')))
-
+# Function that plots the graph image on screen
+def display_graph(G, labels):
     # Add display options
     options = {
-        'node_color': 'lightblue',
+        'node_color': 'lightgreen',
         'node_size': 1000,
         'width': 1,
         'arrows': True,
@@ -53,15 +51,8 @@ def main():
     # Add nodes positioning
     pos = nx.spring_layout(G, k = 5)
 
-    # Generate graph draw
-    labels = nx.get_edge_attributes(G, 'weight')
-    
     # Iterate on edges weight object to extract each edge tuple and weight information
     edges, weights = zip(*labels.items())
-
-    # Print all edges generated
-    print("\n[U, V] : W\n------------\n" + "\n".join("{} : {}".format(k, v) for k, v in labels.items()))
-
 
     # Add the edge display information to the draw
     nx.draw_networkx(G, pos, edge_color = weights, edgelist = edges, edge_cmap = plt.cm.Reds,  **options)
@@ -70,6 +61,20 @@ def main():
     # Display image
     plt.gca().set_facecolor("grey")
     pylab.show()
+
+def main():
+    # Generate basic graph
+    G = generate_graph(int(input('--> ')))
+
+    # Generate graph draw
+    labels = nx.get_edge_attributes(G, 'weight')
+
+    # Print all edges generated
+    print("\n[U, V] : W\n------------")
+    print("\n".join("{} : {}".format(edge, weight) for edge, weight in labels.items()))
+
+    # Display graph image
+    display_graph(G, labels)
 
 if __name__ == "__main__":
     main()
