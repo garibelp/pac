@@ -1,3 +1,4 @@
+from itertools import count
 import random
 import networkx as nx
 import numpy as np
@@ -12,9 +13,13 @@ def generate_graph(nodes):
 
     return generate_edges_weight(G)
 
-def retrieve_negative_cycles(G):
+def has_negative_cycle(G):
     # TODO: Retrieve negative cycle
-    return None
+    try:
+        nx.bellman_ford_predecessor_and_distance(G, 0)
+    except nx.NetworkXUnbounded:
+        return True
+    return False
 
 # Randomly add weight on all edges of the graph
 def generate_edges_weight(G):
@@ -27,11 +32,10 @@ def generate_edges_weight(G):
     for (start, end) in G.edges:
         weight = random.randint(-10, 10)
         G.edges[start, end]['weight'] = weight
-        if weight < 0:
-            neg_cycle = retrieve_negative_cycles(G)
-            if neg_cycle is not None:
-                # TODO: Change the value to a positive if a negative cycle happens
-                print('TODO:' + neg_cycle)
+        if weight < 0 and has_negative_cycle(G):
+            # TODO: Find a better way to break negative cycles
+            # Change the value to a positive if a negative cycle happens
+            G.edges[start, end]['weight'] = weight * -1
     return G
 
 # Function that plots the graph image on screen
@@ -62,19 +66,33 @@ def display_graph(G, labels):
     plt.gca().set_facecolor("grey")
     pylab.show()
 
+# Add the graph to a .csv file
+def write_to_csv(nodes, edges):
+    # TODO: remove prints and add graph to csv file
+    # Print all edges generated
+    print("\nNumber of nodes:", nodes)
+    print("Number of edges:", len(edges.items()))
+    print("\n[U, V] : W\n------------")
+    print("\n".join("{} : {}".format(edge, weight) for edge, weight in edges.items()))
+
 def main():
+    # TODO: Generate multiple graphs and save them on a .csv file for the next step of project
+
+    # Number of nodes on graph
+    nodes = int(input('--> '))
+
     # Generate basic graph
-    G = generate_graph(int(input('--> ')))
+    G = generate_graph(nodes)
 
     # Generate graph draw
-    labels = nx.get_edge_attributes(G, 'weight')
+    edges = nx.get_edge_attributes(G, 'weight')
 
-    # Print all edges generated
-    print("\n[U, V] : W\n------------")
-    print("\n".join("{} : {}".format(edge, weight) for edge, weight in labels.items()))
+    # Function that add the graph to a .csv file
+    write_to_csv(nodes, edges)
 
     # Display graph image
-    display_graph(G, labels)
+    display_graph(G, edges)
+
 
 if __name__ == "__main__":
     main()
