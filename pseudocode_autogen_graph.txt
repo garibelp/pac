@@ -1,0 +1,16 @@
+Graph generation:
+
+- Step 1: Generate a DAG
+    - Connect all nodes without returning to nodes already visited
+        - Extract a sub-array of possible nodes to connect randomly to current node
+    - If all nodes are already connected to the graph, stop iteration and start step 2
+- Step 2: Visit all nodes that aren't root
+    - On each node:
+        - Retrieve all nodes that doesn't have a path to current node
+        - Retrieve all nodes that have a direct path from current node (direct edge connection)
+        - Extract list with possible nodes of the graph that aren't on the previous 2 conditions
+            - Extract a sub-array of possible nodes to connect randomly to current node
+
+Weight generation:
+    - Is randomly generated an integer value between -10 and 10
+    - When adding an edge, the value is then linked to that edge
