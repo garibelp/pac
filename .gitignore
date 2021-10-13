@@ -1,4 +1,4 @@
 # csv file generated with the graphs
 *.csv
-# folder that save the images of the graphs
-/img
+# folder that save the data generated
+/data
