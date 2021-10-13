@@ -111,6 +111,9 @@ def save_image_graph(G, labels, folder, img_name):
     # Iterate on edges weight object to extract each edge tuple and weight information
     edges, weights = zip(*labels.items())
 
+    # Clear older draws
+    plt.clf()
+
     # Add the edge display information to the draw
     nx.draw_networkx(G, pos, edge_color = weights, edgelist = edges, edge_cmap = plt.cm.Reds,  **options)
     nx.draw_networkx_edge_labels(G, pos, edge_labels = labels, label_pos = 0.2, font_size = 7)
@@ -125,6 +128,7 @@ def save_image_graph(G, labels, folder, img_name):
 def main():
     code_start_timestamp = time.time()
     
+    # Generate the folder to save the results of this code execution
     code_start_string = datetime.fromtimestamp(code_start_timestamp)
     os.mkdir('./data/{}'.format(code_start_string))
     
@@ -154,8 +158,7 @@ def main():
             # Write the edges information to file        
             writer.writerow((edge_start, edge_end, weight))
         
-        # TODO: Fix the image saving bug of not reseting the graph generated on the plot
-        # when generating multiple graphs
+        # Save graph image generated on this iteration
         save_image_graph(G, edges, code_start_string, "{:0>3d}".format(i))
         
         print('[{}] Execution duration:'.format(i), time.time() - start_time, 'seconds\n')
