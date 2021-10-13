@@ -130,8 +130,10 @@ def main():
     
     # Generate the folder to save the results of this code execution
     code_start_string = datetime.fromtimestamp(code_start_timestamp)
-    os.mkdir('./data/{}'.format(code_start_string))
     
+    # Generate folder that will save the code execution results
+    os.makedirs('./data/{}'.format(code_start_string))
+
     # Source: https://www.pythontutorial.net/python-basics/python-write-csv-file/
     # Open CSV file to start writing
     f = open('./data/{}/data.csv'.format(code_start_string, code_start_string), 'w')
