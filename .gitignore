@@ -2,3 +2,5 @@
 *.csv
 # folder that save the data generated
 /data
+# Cache generated on execution
+__pycache__
