@@ -6,90 +6,31 @@ import matplotlib.pyplot as plt
 import csv
 from datetime import datetime
 import os
+import sys
 
 # Function that generate the graph using networkx
-def generate_graph(total_nodes):
+def generate_graph(total_nodes, total_edges):
+    print('[nodes, edges] : [{}, {}]'.format(total_nodes, total_edges))
     # Generate an empty graph
     G = nx.DiGraph()
 
-    # Generate a DAG
-    generate_dag(G, total_nodes)
+    def add_edge(iteration, retry):
+        u = random.randint(0, total_nodes - 2)
+        v = random.randint(u + 1, total_nodes - 1)
+        
+        print("[{}] - ({}; {}) - Retry: {}".format(iteration + 1, u, v, retry))
 
-    # Start adding the edges
-    add_extra_edges(G)
+        if G.has_edge(u, v):
+            return add_edge(iteration, True)
+        
+        G.add_edge(u, v, weight = random.randint(-10, 10))
+    
+    for i in range(0, total_edges):
+        print("[{}] Initializing iteration".format(i + 1))
+        add_edge(i, False)
+
     return G
 
-def generate_dag(graph: nx.DiGraph, total_nodes: int):
-    # List with all nodes
-    available_nodes = list(range(1, total_nodes))
-
-
-    # Function that update available nodes
-    def add_and_remove(node, min_connection):
-        child_nodes = add_edges(graph, node, available_nodes, min_connection)
-        # Remove from available list
-        del available_nodes[0:child_nodes]
-    
-    # Add root node
-    graph.add_node(0)
-    add_and_remove(0, 1)
-
-    # Add edges to DAG ensuring that all nodes are added
-    for n in range(1, total_nodes):
-        if (len(available_nodes)) == 0:
-            break
-        else:
-            add_and_remove(n, 1)
-            
-
-def add_edges(graph: nx.DiGraph, start_node: int, available_nodes: list, min_child: int):
-    # Function that will add the edges to the nodes
-    def generate_edges_from_list(node_list):
-        for n in node_list:
-            graph.add_edge(start_node, n, weight = random.randint(-10, 10))
-    # retrieve the number of child that the node will have from the available nodes
-    child_nodes = random.randint(min_child, len(available_nodes))
-    # Add the edges from node to the child
-    generate_edges_from_list(available_nodes[0:child_nodes])
-    return child_nodes
-
-def add_extra_edges(graph: nx.DiGraph):
-    # Add more edges to the DAG
-    for node in list(graph.nodes):
-        if node == 0:
-            # Handle root node
-            print('\nprocessing root')
-        else:
-            # Handle other nodes
-            print('processing node', node)
-            possible_nodes_to_add = retrieve_nodes_without_cycle(graph, 0, node)
-            add_edges(graph, node, possible_nodes_to_add, 0)
-    return
-
-def retrieve_nodes_without_cycle(graph: nx.DiGraph, node_start: int, node_end: int):
-    paths = list((nx.all_simple_paths(graph, node_start, node_end)))
-    nodes_with_path = []
-
-    for l in paths:
-        unique_elements = list(set(l) - set(nodes_with_path))
-        nodes_with_path += unique_elements
-
-    # Return all the nodes that currently doesn't have a path to current node
-    total_nodes = list(range(0, graph.number_of_nodes()))
-    nodes_without_path = list(set(total_nodes) - set(nodes_with_path))
-
-    # Retrieve nodes that already have a path coming from current node to them
-    nodes_connected_from = []
-    for s, e in graph.edges(node_end):
-        nodes_connected_from.append(e)
-
-    # Return list of nodes that have no path coming from or to the current path
-    return list(set(nodes_without_path) - set(nodes_connected_from))
-
-
-# Function that checks if there is a path between the nodes
-def has_existing_path(graph: nx.DiGraph, node_start, node_end):
-    return True if len(list((nx.all_simple_paths(graph, node_start, node_end)))) > 0 else False
 
 # Function that plots the graph image on screen
 def save_image_graph(G, labels, folder, img_name):
@@ -106,7 +47,7 @@ def save_image_graph(G, labels, folder, img_name):
     }
 
     # Add nodes positioning
-    pos = nx.spring_layout(G, k = 5)
+    pos = nx.circular_layout(G)
 
     # Iterate on edges weight object to extract each edge tuple and weight information
     edges, weights = zip(*labels.items())
@@ -124,53 +65,51 @@ def save_image_graph(G, labels, folder, img_name):
     # pylab.show()
 
 
-
 def main():
-    code_start_timestamp = time.time()
+    start_time = time.time()
     
     # Generate the folder to save the results of this code execution
-    code_start_string = datetime.fromtimestamp(code_start_timestamp).strftime('%Y-%m-%dT%H:%M:%S')
+    # code_start_string = datetime.fromtimestamp(start_time).strftime('%Y-%m-%dT%H:%M:%S')
     
     # Generate folder that will save the code execution results
-    os.makedirs('./data/{}'.format(code_start_string))
+    # os.makedirs('./data/{}'.format(code_start_string))
+
+    # Number of nodes on this iteration
+    nodes = int(sys.argv[1])
+    # max_edges = nodes * (nodes - 1) / 2
+    # Number of edges on this iteration
+    edges = int(sys.argv[2])
 
     # Source: https://www.pythontutorial.net/python-basics/python-write-csv-file/
     # Open CSV file to start writing
-    f = open('./data/{}/data.csv'.format(code_start_string, code_start_string), 'w')
-    
+    f = open('./data/data_{}n_{}e.csv'.format(nodes, edges), 'w')
+
     # Create the CSV writer
     writer = csv.writer(f, delimiter = ' ')
 
-    for i in range(0, 20):
-        start_time = time.time()
-        # Number of nodes on this iteration (multiple of 5 autogenerated)
-        nodes = (i//5 + 1) * 5
+    # Generate basic graph
+    G = generate_graph(nodes, edges)
+    print('\nGraph generated: {}'.format(G))
 
-        # Generate basic graph
-        G = generate_graph(nodes)
-        print('\n[{}] Graph generated:'.format(i + 1), G)
+    # Generate graph draw
+    edges = nx.get_edge_attributes(G, 'weight')
 
-        # Generate graph draw
-        edges = nx.get_edge_attributes(G, 'weight')
+    # Write total number of nodes and edges
+    writer.writerow((nodes, len(edges.items())))
 
-        # Write total number of nodes and edges
-        writer.writerow(('G', nodes, len(edges.items())))
+    for (edge_start, edge_end), weight in sorted(edges.items()):
+        # Write the edges information to file        
+        writer.writerow((edge_start, edge_end, weight))
 
-        for (edge_start, edge_end), weight in edges.items():
-            # Write the edges information to file        
-            writer.writerow((edge_start, edge_end, weight))
-        
-        # Save graph image generated on this iteration
-        save_image_graph(G, edges, code_start_string, "{:0>3d}".format(i + 1))
-        
-        print('[{}] Execution duration:'.format(i + 1), time.time() - start_time, 'seconds\n')
-        
-        G.clear()
+    # Save graph image generated on this iteration
+    # save_image_graph(G, edges, code_start_string, 'graph')
+    
+    G.clear()
 
     # Close the file
     f.close()
 
-    print('Total execution duration:', time.time() - code_start_timestamp, 'seconds\n')
+    print('Total execution duration:', time.time() - start_time, 'seconds\n')
 
 if __name__ == "__main__":
     main()

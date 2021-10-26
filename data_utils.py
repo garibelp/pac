@@ -3,23 +3,17 @@ import csv
 
 # TODO: Generate graph using data loaded from .csv file
 def load_csv_to_graph(path) -> Graph:
-    print('File path: "{}"'.format(path))
     # Initialize graph
     G = Graph()
-    # with open(path) as csvDataFile:
-    #     # read file as csv file 
-    #     csvReader = csv.reader(csvDataFile, delimiter = ' ')
-    #     for row in csvReader:
-    #         print(row[0], row[1], row[2])
 
-    # Test of Graph class created
-    G.add_edge(0, 1, -1)
-    G.add_edge(0, 2, 1)
-    G.add_edge(0, 3, 10)
-    G.add_edge(2, 3, -10)
-    G.add_edge(1, 3, 10)
-
-    for edge in G.edges_to(0):
-        edge.print()
+    with open(path) as csvDataFile:
+        # read file as csv file 
+        csvReader = csv.reader(csvDataFile, delimiter = ' ')
+        for index, row in enumerate(csvReader):
+            if index == 0:
+                # First index contains total number of nodes and edges
+                print('Loading graph with {} nodes and {} edges'.format(row[0], row[1]))
+            else:
+                G.add_edge(int(row[0]), int(row[1]), int(row[2]))
 
     return G
