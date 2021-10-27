@@ -44,6 +44,6 @@ class Graph:
 
     def print(self):
         print('\nTotal nodes:', self.total_nodes())
-        print('Total edges:', len(self.edges))
-        for n in self.edges:
-            n.print()
+        print('Total edges:', len(self.edges), '\n')
+        # for n in self.edges:
+        #     n.print()

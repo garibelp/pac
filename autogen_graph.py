@@ -23,7 +23,7 @@ def generate_graph(total_nodes, total_edges):
         if G.has_edge(u, v):
             return add_edge(iteration, True)
         
-        G.add_edge(u, v, weight = random.randint(-10, 10))
+        G.add_edge(u, v, weight = random.randint(-50, 50))
     
     for i in range(0, total_edges):
         print("[{}] Initializing iteration".format(i + 1))
@@ -80,9 +80,11 @@ def main():
     # Number of edges on this iteration
     edges = int(sys.argv[2])
 
+    file_name = sys.argv[3]
+
     # Source: https://www.pythontutorial.net/python-basics/python-write-csv-file/
     # Open CSV file to start writing
-    f = open('./data/data_{}n_{}e.csv'.format(nodes, edges), 'w')
+    f = open('./data/{}.csv'.format(file_name), 'w')
 
     # Create the CSV writer
     writer = csv.writer(f, delimiter = ' ')

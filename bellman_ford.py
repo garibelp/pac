@@ -25,6 +25,7 @@ update((u, v) ∈ E)
 
 def bellman_ford(G: Graph, src: int):
     print('\nBellman-Ford start - Source node:', src)
+    G.print()
     
     start_time = time.time()
     
@@ -36,18 +37,14 @@ def bellman_ford(G: Graph, src: int):
     
     # Set the cost of the src to itself as 0
     distance[src] = 0
-
     for _ in range(G.total_nodes() - 1):
         for edge in G.get_edges():
             [u, v, w] = edge.get_values()
             if distance[u] != float("Inf") and distance[u] + w < distance[v]:
-                    distance[v] = distance[u] + w
-                    pred[v] = u
+                distance[v] = distance[u] + w
+                pred[v] = u
 
     # Calculates the execution duration
-    duration = round(time.time() - start_time, 10)
+    duration = round(time.time() - start_time, 5)
 
-    # print('\nCosts:', distance)
-    # print('Predecessors:', pred)
-    # print('\nBellman-Ford end [Duration: {} seconds]'.format(duration))
     return [distance, pred, duration]
