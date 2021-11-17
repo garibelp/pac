@@ -65,9 +65,12 @@ def dijkstra_heap(G: Graph, src: int):
             if distance[v] != float("Inf") and distance[v] + cost < distance[w]:
                 distance[w] = distance[v] + cost
                 pred[w] = v
-                mh.update(heap_list, pos_H, mh.HeapElement(distance[w], w))
-
+                # Implementation with update
+                # mh.update(heap_list, pos_H, mh.HeapElement(distance[w], w))
+                # Implementation with re-insertion
+                heap_size = mh.insert(heap_list, pos_H, heap_size, mh.HeapElement(distance[w], w))
+                
     # Calculates the execution duration
-    duration = round(time.time() - start_time, 10)
+    duration = round(time.time() - start_time, 5)
 
     return [distance, pred, duration]

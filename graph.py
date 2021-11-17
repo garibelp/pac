@@ -6,7 +6,7 @@ class Edge:
         self.end = end
         self.weight = weight
     
-    def print(self):
+    def __repr__(self):
         print("({} -> {}): {}".format(self.start, self.end, self.weight))
 
     def get_values(self):
@@ -21,11 +21,15 @@ class Graph:
         if not node in self.nodes:
             self.nodes.append(node)
 
+
     def add_edge(self, start: int, end: int, weight: int):
         edge = Edge(start, end, weight)
         self.add_node(start)
         self.add_node(end)
         self.edges.append(edge)
+
+    def remove_edge(self, edge: Edge):
+        self.edges.remove(edge)
 
     def get_nodes(self):
         return np.sort(self.nodes)

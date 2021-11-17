@@ -6,8 +6,8 @@ class HeapElement:
         self.key = key
         self.content = content
     
-    def print(self):
-        print(" (key: {}, content: {}),".format(self.key, self.content))
+    def __repr__(self):
+        return "(key: {}, content: {})".format(self.key, self.content)
 
 def parent(i):
     return int((i - 1) / 2)
@@ -29,17 +29,21 @@ def up_heap(heap_list, pos_H, elem_pos):
         switch_array_position(pos_H, heap_list[f].content, heap_list[p].content)
         f = p
 
-def insert(self, element: HeapElement):
+def insert(heap_list, pos_H, heap_size, element: HeapElement):
     # Insert new element on last position
-    self.heap_list.append(element)
-    self.pos_H.append(element.content)
-    self.size += 1
+    
+    if heap_size >= len(heap_list):
+        return heap_size
+    
+    heap_list[heap_size] = element
+    pos_H[element.content] = heap_size
+    heap_size += 1
 
     # Call up_heap sending new element position on list
-    self.up_heap(self.size - 1)
-    
+    up_heap(heap_list, pos_H, heap_size - 1)
+
     # Return total length of the heap
-    return self.size
+    return heap_size
 
 def down_heap(heap_list, pos_H, heap_size, elem_pos):
     p = elem_pos
